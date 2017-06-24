@@ -3,7 +3,7 @@ import zipfile
 import numpy as np
 import mxnet as mx
 import time
-import cv2
+import picamera
 
 
 def unzip(zip_file, outdir):
@@ -36,9 +36,9 @@ def predict(image_path, mod):
     return mod.get_outputs()[0].asnumpy()
 
 
-camera_port = 0
-camera = cv2.VideoCapture(camera_port)
-time.sleep(0.5)  # If you don't wait, the image will be dark
-return_value, image = camera.read()
-cv2.imwrite('to_detect.png', image)
-del (camera)  # so that others can use the camera as soon as possible
+with picamera.PiCamera() as camera:
+    camera.resolution = (1024, 768)
+    camera.start_preview()
+    # Camera warm-up time
+    time.sleep(2)
+    camera.capture('to_recognize.jpg')
